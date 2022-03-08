@@ -1,4 +1,4 @@
-# @login-with-metamask/backend
+# merkallow api
 
 ## Deploy to Heroku
 
