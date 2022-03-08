@@ -4,23 +4,17 @@ import { INTEGER, Sequelize, STRING } from 'sequelize';
 
 import { User } from './models';
 
-// devjutsu test base
-// const DATABASE_URL='ov36x80yv0lp.eu-west-2.psdb.cloud';
-// var user = 'xou9xmu6cf8c';
-// var pass = 'pscale_pw_bof3I3YYIUabu7mbkrkOakEE6aAP6KWJ4NVQU7T4-3g';
-
 const DATABASE_URL='qajpbwcopx9h.eu-west-3.psdb.cloud';
-var user = '2blfy0r2pnpr';
-var pass = 'pscale_pw_KWzGVacsYK6JwzDQZkL4nVz1cTXuro3Q7DIXkFrOTPE';
-// DATABASE_URL='mysql://2blfy0r2pnpr:pscale_pw_KWzGVacsYK6JwzDQZkL4nVz1cTXuro3Q7DIXkFrOTPE@qajpbwcopx9h.eu-west-3.psdb.cloud/testdb?ssl={"rejectUnauthorized":true}'
-
-
+var user = '';
+var pass = '';
 
 const sequelize = new Sequelize('testdb', user, pass, {
 	host: DATABASE_URL,
 	dialect: 'mysql',
-	// storage: path.join(os.tmpdir(), 'db.mysql'),
-	// logging: false,
+	"ssl": true,
+	"dialectOptions": {
+		"ssl": {"rejectUnauthorized":true}
+	}
 });
 
 
