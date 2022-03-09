@@ -1,16 +1,18 @@
 import os from 'os';
 import path from 'path';
+// import mysql2 from 'serverless-mysql'; //'mysql2';
 import { INTEGER, Sequelize, STRING } from 'sequelize';
 
 import { User } from './models';
 
-const DATABASE_URL='qajpbwcopx9h.eu-west-3.psdb.cloud';
-var user = '';
-var pass = '';
+const DATABASE_URL=process.env.db_url;
+var user = process.env.user;
+var pass = process.env.pass;
 
 const sequelize = new Sequelize('testdb', user, pass, {
 	host: DATABASE_URL,
 	dialect: 'mysql',
+    // dialectModule: mysql,
 	"ssl": true,
 	"dialectOptions": {
 		"ssl": {"rejectUnauthorized":true}
