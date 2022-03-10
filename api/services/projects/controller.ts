@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { Project } from '../../models/project.model';
 
-export const projectsList = (req: Request, res: Response, next: NextFunction) => {
+export const listProjects = (req: Request, res: Response, next: NextFunction) => {
 	const whereClause =
 		req.query && req.query.userId
 			? {
@@ -15,12 +15,7 @@ export const projectsList = (req: Request, res: Response, next: NextFunction) =>
 		.catch(next);
 };
 
-export const get = (req: Request, res: Response, next: NextFunction) => {
-	if ((req as any).project.payload.id !== +req.params.projectId) {
-		return res
-			.status(401)
-			.send({ error: 'You can can only access yourself' });
-	}
+export const getProject = (req: Request, res: Response, next: NextFunction) => {
 	return Project.findByPk(req.params.projectId)
 		.then((project: Project | null) => res.json(project))
 		.catch(next);
