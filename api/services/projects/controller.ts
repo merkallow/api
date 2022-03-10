@@ -21,13 +21,16 @@ export const getProject = (req: Request, res: Response, next: NextFunction) => {
 		.catch(next);
 };
 
-export const create = (req: Request, res: Response, next: NextFunction) =>
-Project.create(req.body)
+export const createProject = (req: Request, res: Response, next: NextFunction) => {
+    var userId = (req as any).project.payload.id;
+    
+    Project.create(req.body)
 		.then((project: Project) => res.json(project))
 		.catch(next);
+}
+
 
 export const patch = (req: Request, res: Response, next: NextFunction) => {
-	// Only allow to fetch current user
 	if ((req as any).project.payload.id !== +req.params.projectId) {
 		return res
 			.status(401)
