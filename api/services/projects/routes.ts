@@ -7,7 +7,7 @@ import * as controller from './controller';
 export const userRouter = express.Router();
 
 /** GET /api/projects */
-userRouter.route('/').get(controller.find);
+userRouter.route('/').get(controller.projectsList);
 
 /** GET /api/projects/:projectId */
 /** Authenticated route */

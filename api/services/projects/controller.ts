@@ -2,11 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 
 import { Project } from '../../models/project.model';
 
-export const find = (req: Request, res: Response, next: NextFunction) => {
+export const projectsList = (req: Request, res: Response, next: NextFunction) => {
 	const whereClause =
-		req.query && req.query.publicAddress
+		req.query && req.query.userId
 			? {
-					where: { publicAddress: req.query.publicAddress },
+					where: { userId: req.query.userId },
 			  }
 			: undefined;
 
