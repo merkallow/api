@@ -1,5 +1,7 @@
 import os from 'os';
 import path from 'path';
+require('dotenv').config();
+
 // import mysql2 from 'serverless-mysql'; //'mysql2';
 import { INTEGER, Sequelize, STRING } from 'sequelize';
 

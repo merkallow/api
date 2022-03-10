@@ -33,6 +33,7 @@
     "@types/validator": "^13.7.1",
     "body-parser": "^1.19.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
     "eth-sig-util": "^3.0.1",
     "ethereumjs-util": "^7.1.4",
     "express": "^4.17.3",
