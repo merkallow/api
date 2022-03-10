@@ -15,7 +15,3 @@ userRouter.route('/:projectId').get(controller.getProject);
 
 /** POST /api/projects */
 userRouter.route('/').post(jwt(config), controller.createProject);
-
-/** PATCH /api/projects/:projectId */
-/** Authenticated route */
-userRouter.route('/:projectId').patch(jwt(config), controller.patch);

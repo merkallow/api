@@ -23,34 +23,8 @@ export const getProject = (req: Request, res: Response, next: NextFunction) => {
 
 export const createProject = (req: Request, res: Response, next: NextFunction) => {
     var userId = (req as any).project.payload.id;
-    
+
     Project.create(req.body)
 		.then((project: Project) => res.json(project))
 		.catch(next);
 }
-
-
-export const patch = (req: Request, res: Response, next: NextFunction) => {
-	if ((req as any).project.payload.id !== +req.params.projectId) {
-		return res
-			.status(401)
-			.send({ error: 'You can can only access yourself' });
-	}
-	return Project.findByPk(req.params.projectId)
-		.then((project: Project | null) => {
-			if (!project) {
-				return project;
-			}
-
-			Object.assign(project, req.body);
-			return project.save();
-		})
-		.then((project: Project | null) => {
-			return project
-				? res.json(project)
-				: res.status(401).send({
-						error: `Project with id ${req.params.projectId} is not found in database`,
-				  });
-		})
-		.catch(next);
-};
