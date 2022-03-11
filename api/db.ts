@@ -5,7 +5,7 @@ require('dotenv').config();
 // import mysql2 from 'serverless-mysql'; //'mysql2';
 import { INTEGER, Sequelize, STRING } from 'sequelize';
 
-import { User } from './models';
+import { User, Project } from './models';
 
 const DATABASE_URL=process.env.db_url;
 var user = process.env.user;
@@ -44,6 +44,26 @@ User.init(
 	{
 		modelName: 'user',
 		sequelize, // This bit is important
+		timestamps: false,
+	}
+);
+
+Project.init(
+	{
+		name: {
+			allowNull: false,
+			type: STRING,
+			validate: { isLowercase: true },
+		},
+		userId: {
+			allowNull: false,
+			type: INTEGER.UNSIGNED,
+			unique: true,
+		},
+	},
+	{
+		modelName: 'project',
+		sequelize,
 		timestamps: false,
 	}
 );
