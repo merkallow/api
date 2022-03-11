@@ -31,7 +31,7 @@ export const listAddresses = (req: Request, res: Response, next: NextFunction) =
 export const addAddress = (req: Request, res: Response, next: NextFunction) => {
     console.log(">>> addresses post");
     var userId = (req as any).user.payload.id;
-    var projectId = req.body.projectId;
+    var projectId = req.params.projectId;
     if(!userId) {
         return res.status(400).json({
             message: 'User id is required',
@@ -45,5 +45,7 @@ export const addAddress = (req: Request, res: Response, next: NextFunction) => {
         });
     }
 
-    return res.sendStatus(200);
+    Address.create({projectId: projectId, publicAddress: req.body.publicAddress})
+		.then((address: Address) => res.json(address))
+		.catch(next);
 };
