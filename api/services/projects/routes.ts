@@ -4,14 +4,14 @@ import jwt from 'express-jwt';
 import { config } from '../../config';
 import * as controller from './controller';
 
-export const userRouter = express.Router();
+export const projRouter = express.Router();
 
 /** GET /api/projects */
-userRouter.route('/').get(controller.listProjects);
+projRouter.route('/').get(jwt(config), controller.listProjects);
 
 /** GET /api/projects/:projectId */
 /** Authenticated route */
-userRouter.route('/:projectId').get(controller.getProject);
+projRouter.route('/:projectId').get(controller.getProject);
 
 /** POST /api/projects */
-userRouter.route('/').post(jwt(config), controller.createProject);
+projRouter.route('/').post(jwt(config), controller.createProject);
