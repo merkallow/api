@@ -7,10 +7,7 @@ import * as controller from './controller';
 export const addressRouter = express.Router();
 
 /** GET /api/addresses */
-addressRouter.route('/:projectId').get(jwt(config), controller.listAddresses);
+addressRouter.route('/:projectId').get(jwt(config), controller.get);
 
 /** POST /api/addresses */
-addressRouter.route('/:projectId').post(jwt(config), controller.addAddress);
-
-/** POST /api/addresses */
-addressRouter.route('/bulk/:projectId').post(jwt(config), controller.addBulk);
+addressRouter.route('/:projectId').post(jwt(config), controller.add);
