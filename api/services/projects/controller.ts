@@ -31,13 +31,9 @@ export const getProject = (req: Request, res: Response, next: NextFunction) => {
 		.catch(next);
 };
 
-export const createProject = (req: Request<Project>, res: Response, next: NextFunction) => {
-    var userId = (req as any).user.payload.id;
-
-	var testProj = new Project({id: 1, name: 'hz', 'userId': 1});
-	throw new Error("not yet implemented");
-
-	//Project.create(req.body)
-		// .then((project: Project) => res.json(project))
-		// .catch(next);
+export const createProject = async (req: Request<Project>, res: Response, next: NextFunction) => {
+    const userId = (req as any).user.payload.id;
+	Project.create({name: req.body.name, userId: userId})
+		.then((project: Project) => res.json(project))
+		.catch(next);
 }
