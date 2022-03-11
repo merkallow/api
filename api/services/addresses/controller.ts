@@ -60,3 +60,34 @@ export const add = (req: Request, res: Response, next: NextFunction) => {
 		.then((address: Address[]) => res.json(address.length))
 		.catch(next);
 };
+
+export const update = (req: Request, res: Response, next: NextFunction) => {
+    const address = req.body.address;
+    var userId = (req as any).user.payload.id;
+    var addressId = req.params.addressId;
+
+    console.log(">>> addresses update " + addressId + " to new address: " + address);
+    if(!userId) {
+        return res.status(400).json({
+            message: 'User id is required',
+            data: null
+        });
+    }
+    if(!addressId) {
+        return res.status(400).json({
+            message: 'Address id is required for update',
+            data: null
+        });
+    }
+    if(!address) {
+        return res.status(400).json({
+            message: 'Address is required',
+            data: null
+        });
+    }
+
+    return Address.update({publicAddress: address},
+                            {where: {id : addressId}})
+		.then((updatedCount) => res.status(200).send(updatedCount))
+		.catch(next);
+};
