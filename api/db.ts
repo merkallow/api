@@ -54,11 +54,12 @@ Project.init(
 			allowNull: false,
 			type: STRING,
 			validate: { isLowercase: true },
+			unique: true,
 		},
 		userId: {
 			allowNull: false,
 			type: INTEGER.UNSIGNED,
-			unique: true,
+			unique: false,
 		},
 	},
 	{
@@ -78,7 +79,7 @@ Address.init(
 		projectId: {
 			allowNull: false,
 			type: INTEGER.UNSIGNED,
-			unique: true,
+			unique: false,
 		},
 	},
 	{

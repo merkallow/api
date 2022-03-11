@@ -11,3 +11,6 @@ addressRouter.route('/:projectId').get(jwt(config), controller.listAddresses);
 
 /** POST /api/addresses */
 addressRouter.route('/:projectId').post(jwt(config), controller.addAddress);
+
+/** POST /api/addresses */
+addressRouter.route('/bulk/:projectId').post(jwt(config), controller.addBulk);
