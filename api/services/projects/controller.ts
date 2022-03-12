@@ -7,8 +7,6 @@ const SHA256 = require('crypto-js/sha256');
 import { Project } from '../../models/project.model';
 import { Address } from '../../models/address.model';
 
-
-
 export const listProjects = (req: Request, res: Response, next: NextFunction) => {
     var userId = (req as any).user.payload.id;
     if(!userId) {
@@ -62,9 +60,25 @@ export const generateTree = async (req: Request, res: Response, next: NextFuncti
 }
 
 function generate(addresslist : Address[]) {
-
     const addresses = addresslist.map((addr: Address) => { return addr.publicAddress; });
-    const result = addresses.join("");
-    console.log("###> " + result);
-    return result;
+    
+    const leaves = addresses.map(x => SHA256(x));
+    const tree = new MerkleTree(leaves, SHA256);
+    const root = tree.getRoot().toString('hex');
+    const leaf = SHA256(addresses[0]);
+    const proof = tree.getHexProof(leaf);
+
+    console.log();
+    console.log("# root: " + root);
+    console.log("# leaf: " + leaf);
+    console.log();
+    console.log(tree.toString());
+    console.log();
+    //console.log(tree.verify(proof, leaf, root));
+    console.log("# proof:");
+    proof.forEach(element => {
+        console.log("###> " + JSON.stringify(element));
+    });
+    
+    return root;
 }
