@@ -91,3 +91,26 @@ export const update = (req: Request, res: Response, next: NextFunction) => {
 		.then((updatedCount) => res.status(200).send(updatedCount))
 		.catch(next);
 };
+
+export const del= (req: Request, res: Response, next: NextFunction) => {
+    var userId = (req as any).user.payload.id;
+    var addressId = req.params.addressId;
+
+    console.log(">>> addresses delete " + addressId);
+    if(!userId) {
+        return res.status(400).json({
+            message: 'User id is required',
+            data: null
+        });
+    }
+    if(!addressId) {
+        return res.status(400).json({
+            message: 'Address id is required for update',
+            data: null
+        });
+    }
+
+    return Address.destroy({where: {id : addressId}})
+		.then(deletedCount => res.json(deletedCount))
+		.catch(next);
+};

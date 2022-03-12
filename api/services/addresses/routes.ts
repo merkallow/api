@@ -14,3 +14,6 @@ addressRouter.route('/:projectId').post(jwt(config), controller.add);
 
 /** Put /api/addresses */
 addressRouter.route('/:addressId').put(jwt(config), controller.update);
+
+/** Put /api/addresses */
+addressRouter.route('/:addressId').delete(jwt(config), controller.del);
