@@ -6,6 +6,7 @@ const SHA256 = require('crypto-js/sha256');
 
 import { Project } from '../../models/project.model';
 import { Address } from '../../models/address.model';
+import { Proof } from '../../models/proof.model';
 
 export const listProjects = (req: Request, res: Response, next: NextFunction) => {
     var userId = (req as any).user.payload.id;
@@ -65,20 +66,25 @@ function generate(addresslist : Address[]) {
     const leaves = addresses.map(x => SHA256(x));
     const tree = new MerkleTree(leaves, SHA256);
     const root = tree.getRoot().toString('hex');
-    const leaf = SHA256(addresses[0]);
-    const proof = tree.getHexProof(leaf);
+    console.log("root: " + root);
 
-    console.log();
-    console.log("# root: " + root);
-    console.log("# leaf: " + leaf);
-    console.log();
-    console.log(tree.toString());
-    console.log();
-    //console.log(tree.verify(proof, leaf, root));
-    console.log("# proof:");
-    proof.forEach(element => {
-        console.log("###> " + JSON.stringify(element));
-    });
-    
+    addresses.forEach(addr => uploadProof(addr, tree, root));
     return root;
+}
+
+function uploadProof(addr: string, tree: MerkleTree, root: string) {
+    const leaf = SHA256(addr).toString();
+    const proof = tree.getHexProof(leaf);
+    const result = proof.map((p) => p.substring(2)).join("");
+    console.log("> uploading " + addr + " : " + leaf + " > " + result);
+
+    const pf : Proof = {
+        root: root,
+        leaf: leaf,
+        proof: result
+    }
+    console.log();
+    console.log(JSON.stringify(pf, undefined, 2));
+
+    return true;
 }
