@@ -15,3 +15,6 @@ projRouter.route('/:projectId').get(controller.getProject);
 
 /** POST /api/projects */
 projRouter.route('/').post(jwt(config), controller.createProject);
+
+/** POST /api/projects/generate */
+projRouter.route('/generate/:projectId').post(jwt(config), controller.generateTree)

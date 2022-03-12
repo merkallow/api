@@ -1,9 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { where } from 'sequelize/types';
 import { resourceLimits } from 'worker_threads';
+import { MerkleTree } from 'merkletreejs';
+const SHA256 = require('crypto-js/sha256');
 
 import { Project } from '../../models/project.model';
-import { User } from '../../models/user.model';
+import { Address } from '../../models/address.model';
+
+
 
 export const listProjects = (req: Request, res: Response, next: NextFunction) => {
     var userId = (req as any).user.payload.id;
@@ -21,12 +25,15 @@ export const listProjects = (req: Request, res: Response, next: NextFunction) =>
 };
 
 export const getProject = (req: Request, res: Response, next: NextFunction) => {
-	
-	if(req.params == null) {
-		return res.json([]);
-	}
+	var projectId = req.params.projectId;
+	if(!projectId) {
+        return res.status(400).json({
+            message: 'Project id is required',
+            data: null
+        });
+    }
 
-	return Project.findByPk(req.params.projectId)
+	return Project.findByPk(projectId)
 		.then((project: Project | null) => res.json(project))
 		.catch(next);
 };
@@ -36,4 +43,28 @@ export const createProject = async (req: Request<Project>, res: Response, next: 
 	Project.create({name: req.body.name, userId: userId})
 		.then((project: Project) => res.json(project))
 		.catch(next);
+}
+
+export const generateTree = async (req: Request, res: Response, next: NextFunction) => {
+    console.log("# Generate");
+    const userId = (req as any).user.payload.id;
+    var projectId = req.params.projectId;
+	if(!projectId) {
+        return res.status(400).json({
+            message: 'Project id is required',
+            data: null
+        });
+    }
+	
+    Address.findAll({where: {projectId: 1}})
+        .then(addrs => res.json(generate(addrs)))
+        .catch(next);
+}
+
+function generate(addresslist : Address[]) {
+
+    const addresses = addresslist.map((addr: Address) => { return addr.publicAddress; });
+    const result = addresses.join("");
+    console.log("###> " + result);
+    return result;
 }
