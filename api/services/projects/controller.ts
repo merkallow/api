@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { where } from 'sequelize/types';
 import { resourceLimits } from 'worker_threads';
 import { MerkleTree } from 'merkletreejs';
-const SHA256 = require('crypto-js/sha256');
+const keccak256 = require("keccak256");
 import { NFTStorage, File } from 'nft.storage';
 import mime from 'mime';
 import { Blob } from 'buffer';
@@ -71,8 +71,8 @@ export const generateTree = async (req: Request, res: Response, next: NextFuncti
 async function generate(addresslist : Address[]) {
     const addresses = addresslist.map((addr: Address) => { return addr.publicAddress; });
     
-    const leaves = addresses.map(x => SHA256(x).toString());
-    const tree = new MerkleTree(leaves, SHA256);
+    const leaves = addresses.map(x => keccak256(x).toString());
+    const tree = new MerkleTree(leaves, keccak256, {sortPairs:true});
     const root = tree.getRoot().toString('hex');
     console.log("root: " + root);
 
