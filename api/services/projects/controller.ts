@@ -3,6 +3,9 @@ import { where } from 'sequelize/types';
 import { resourceLimits } from 'worker_threads';
 import { MerkleTree } from 'merkletreejs';
 const SHA256 = require('crypto-js/sha256');
+import { NFTStorage, File } from 'nft.storage';
+import mime from 'mime';
+import { Blob } from 'buffer';
 
 import { Project } from '../../models/project.model';
 import { Address } from '../../models/address.model';
@@ -60,19 +63,25 @@ export const generateTree = async (req: Request, res: Response, next: NextFuncti
         .catch(next);
 }
 
-function generate(addresslist : Address[]) {
+async function generate(addresslist : Address[]) {
     const addresses = addresslist.map((addr: Address) => { return addr.publicAddress; });
     
-    const leaves = addresses.map(x => SHA256(x));
+    const leaves = addresses.map(x => SHA256(x).toString());
     const tree = new MerkleTree(leaves, SHA256);
     const root = tree.getRoot().toString('hex');
     console.log("root: " + root);
 
-    addresses.forEach(addr => uploadProof(addr, tree, root));
+    console.log();
+
+    const content = {"root" : root, "address_hash": leaves};
+    const cid = await uploadIpfs(JSON.stringify(content), root).then((c) => {
+        console.log(">< generated? " + c);
+    });
+
     return root;
 }
 
-function uploadProof(addr: string, tree: MerkleTree, root: string) {
+async function uploadProof(addr: string, tree: MerkleTree, root: string) {
     const leaf = SHA256(addr).toString();
     const proof = tree.getHexProof(leaf);
     const result = proof.map((p) => p.substring(2)).join("");
@@ -83,8 +92,15 @@ function uploadProof(addr: string, tree: MerkleTree, root: string) {
         leaf: leaf,
         proof: result
     }
-    console.log();
-    console.log(JSON.stringify(pf, undefined, 2));
+    // console.log(JSON.stringify(pf, undefined, 2));
+}
 
-    return true;
+async function uploadIpfs(addresses : string, root: string) {
+    const nftstorage = new NFTStorage({ token: process.env.nftkey })
+
+    var file = new File([addresses], "merkles.txt", {
+        type: "text/plain",
+      });
+
+    return await nftstorage.storeBlob(file);
 }
