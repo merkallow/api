@@ -53,7 +53,6 @@ Project.init(
 		name: {
 			allowNull: false,
 			type: STRING,
-			validate: { isLowercase: true },
 			unique: true,
 		},
 		userId: {
