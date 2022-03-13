@@ -58,7 +58,7 @@ export const generateTree = async (req: Request, res: Response, next: NextFuncti
         });
     }
 	
-    Address.findAll({where: {projectId: 1}})
+    Address.findAll({where: {projectId: projectId}})
         .then(addrs => {
             generate(addrs).then(result => {
                 console.log("#> " + result);
@@ -70,8 +70,9 @@ export const generateTree = async (req: Request, res: Response, next: NextFuncti
 
 async function generate(addresslist : Address[]) {
     const addresses = addresslist.map((addr: Address) => { return addr.publicAddress; });
-    
-    const leaves = addresses.map(x => keccak256(x).toString());
+    const leaves = addresses.map(x => keccak256(x).toString("hex"));
+    console.log("addresses: " + addresses);
+    console.log("leaves: " + leaves);
     const tree = new MerkleTree(leaves, keccak256, {sortPairs:true});
     const root = tree.getRoot().toString('hex');
     console.log("root: " + root);
