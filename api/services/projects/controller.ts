@@ -59,7 +59,12 @@ export const generateTree = async (req: Request, res: Response, next: NextFuncti
     }
 	
     Address.findAll({where: {projectId: 1}})
-        .then(addrs => res.json(generate(addrs)))
+        .then(addrs => {
+            generate(addrs).then(result => {
+                console.log("#> " + result);
+                return res.json(result);
+            });
+        })
         .catch(next);
 }
 
@@ -74,33 +79,23 @@ async function generate(addresslist : Address[]) {
     console.log();
 
     const content = {"root" : root, "address_hash": leaves};
-    const cid = await uploadIpfs(JSON.stringify(content), root).then((c) => {
-        console.log(">< generated? " + c);
-    });
-
-    return root;
+    const result = await uploadIpfs(JSON.stringify(content), root)
+            .then((cid) => {
+                console.log("> generated " + cid);
+                return {
+                    "root": root,
+                    "cid": cid
+                }
+            });
+    return result;
 }
 
-async function uploadProof(addr: string, tree: MerkleTree, root: string) {
-    const leaf = SHA256(addr).toString();
-    const proof = tree.getHexProof(leaf);
-    const result = proof.map((p) => p.substring(2)).join("");
-    console.log("> uploading " + addr + " : " + leaf + " > " + result);
-
-    const pf : Proof = {
-        root: root,
-        leaf: leaf,
-        proof: result
-    }
-    // console.log(JSON.stringify(pf, undefined, 2));
-}
-
-async function uploadIpfs(addresses : string, root: string) {
+async function uploadIpfs(content : string, root: string) {
     const nftstorage = new NFTStorage({ token: process.env.nftkey })
 
-    var file = new File([addresses], "merkles.txt", {
+    var file = new File([content], "merkallow.txt", {
         type: "text/plain",
-      });
+    });
 
     return await nftstorage.storeBlob(file);
 }
