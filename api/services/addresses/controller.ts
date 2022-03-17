@@ -23,9 +23,9 @@ export const get = (req: Request, res: Response, next: NextFunction) => {
     }
 
     return Address.findAll({ where: { projectId: projectId }})
-        .then((addresses?: Address[]) => {
-            res.json(addresses);
-        });
+                .then((addresses?: Address[]) => {
+                    res.json(addresses);
+                });
 };
 
 export const add = (req: Request, res: Response, next: NextFunction) => {
@@ -56,9 +56,19 @@ export const add = (req: Request, res: Response, next: NextFunction) => {
         return {publicAddress: addr, projectId: projectId};
     });
 
-    return Address.bulkCreate(entries)
-		.then((address: Address[]) => res.json(address.length))
-		.catch(next);
+    Project.findByPk(projectId)
+    .then((proj: Project | null) =>  {
+       if(proj.userId != userId) {
+            return res.status(400).json({
+                    message: 'Must be project owner to edit whitelist',
+                    data: null
+                });
+       } else {
+            return Address.bulkCreate(entries)
+            .then((address: Address[]) => res.json(address.length))
+            .catch(next);
+       }
+    });
 };
 
 export const update = (req: Request, res: Response, next: NextFunction) => {
