@@ -57,6 +57,15 @@ export const generateTree = async (req: Request, res: Response, next: NextFuncti
             data: null
         });
     }
+
+    Project.findByPk(projectId)
+		.then((project: Project | null) =>  {if (project.userId != userId) { 
+            return res.status(400).json({
+                message: 'Must be project owner to generate merkle tree',
+                data: null
+            });
+        }});
+
 	
     Address.findAll({where: {projectId: projectId}})
         .then(addrs => {
