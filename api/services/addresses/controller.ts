@@ -122,7 +122,19 @@ export const del= (req: Request, res: Response, next: NextFunction) => {
         });
     }
 
-    return Address.destroy({where: {id : addressId}})
-		.then(deletedCount => res.json(deletedCount))
-		.catch(next);
+    Address.findByPk(addressId).then((addr: Address) => {
+        Project.findByPk(addr.projectId).then((proj: Project) => {
+            if(proj.userId != userId) {
+                return res.status(400).json({
+                    message: 'Must be project owner to edit whitelist',
+                    data: null
+                });
+            }
+            else {
+                return Address.destroy({where: {id : addressId}})
+                .then(deletedCount => res.json(deletedCount))
+                .catch(next);
+            }
+        });
+    });
 };
