@@ -65,7 +65,7 @@ export const add = (req: Request, res: Response, next: NextFunction) => {
                 });
        } else {
             return Address.bulkCreate(entries)
-            .then((address: Address[]) => res.json(address.length))
+            .then((addr: Address[]) => res.json(addr))
             .catch(next);
        }
     });
