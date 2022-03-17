@@ -3,7 +3,7 @@ import { where } from 'sequelize/types';
 import { resourceLimits } from 'worker_threads';
 
 import { Address } from '../../models/address.model';
-
+import { Project } from '../../models/project.model';
 
 export const get = (req: Request, res: Response, next: NextFunction) => {
     console.log(">>> addresses get");
@@ -85,11 +85,23 @@ export const update = (req: Request, res: Response, next: NextFunction) => {
             data: null
         });
     }
-
-    return Address.update({publicAddress: address},
-                            {where: {id : addressId}})
-		.then((updatedCount) => res.status(200).send(updatedCount))
-		.catch(next);
+    
+    Address.findByPk(addressId).then((addr: Address) => {
+        Project.findByPk(addr.projectId).then((proj: Project) => {
+            if(proj.userId != userId) {
+                return res.status(400).json({
+                    message: 'Must be project owner to edit whitelist',
+                    data: null
+                });
+            }
+            else {
+                return Address.update({publicAddress: address},
+                    {where: {id : addressId}})
+                    .then((updatedCount) => res.status(200).send(updatedCount))
+                    .catch(next);
+            }
+        });
+    });
 };
 
 export const del= (req: Request, res: Response, next: NextFunction) => {
